@@ -3,6 +3,7 @@ import { BadRequestError } from "../../utils/error-types.js";
 import { User } from "../user/user-model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { BlackListToken } from "./black-list-token-model.js";
 
 export async function registerService(
   email: string,
@@ -52,6 +53,17 @@ export async function loginService(
     );
 
     return token;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function logoutService(token: string) {
+  try {
+    const blackListToken = await BlackListToken.create({
+      token: token,
+    });
+    return blackListToken;
   } catch (error) {
     throw error;
   }

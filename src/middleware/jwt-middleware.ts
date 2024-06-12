@@ -2,6 +2,7 @@ import jwt, { type JwtPayload } from "jsonwebtoken";
 import type { Request, Response, NextFunction } from "express";
 import { BadRequestError } from "../utils/error-types.js";
 import { serverConfig } from "../config/server-config.js";
+import { BlackListToken } from "../features/auth/black-list-token-model.js";
 
 interface MyJwtPayload extends JwtPayload {
   userId: number;
@@ -28,6 +29,16 @@ export async function jwtValidator(
 
     if (!token) {
       throw new BadRequestError("Token not provided");
+    }
+
+    const blackListedToken = await BlackListToken.findOne({
+      where: { token: token },
+    });
+
+    if (blackListedToken) {
+      throw new BadRequestError(
+        "Token blacklisted, please generate new token."
+      );
     }
 
     jwt.verify(token, serverConfig.JWT_KEY, (err, decoded) => {

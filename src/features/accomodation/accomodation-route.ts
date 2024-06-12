@@ -14,6 +14,10 @@ accomodationRouter.post(
   jwtValidator,
   addAccomodationController
 );
-accomodationRouter.get("/getDetail/:id", getAccomodationDetailController);
+accomodationRouter.get(
+  "/getDetail/:id",
+  jwtValidator,
+  getAccomodationDetailController
+);
 
 export { accomodationRouter };

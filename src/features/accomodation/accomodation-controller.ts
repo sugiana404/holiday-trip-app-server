@@ -6,7 +6,7 @@ import {
 } from "./accomodation-service.js";
 import { formatResponse } from "../../utils/response-format.js";
 import { BadRequestError } from "../../utils/error-types.js";
-import { getRoomServiceByAccomodationIdService } from "./room-type-service.js";
+import { getRoomTypeByAccomodationIdService } from "./room-type-service.js";
 
 export async function getAccomodationController(
   req: Request,
@@ -27,7 +27,7 @@ export async function addAccomodationController(
   next: NextFunction
 ) {
   try {
-    const { name, location, pictureUrl, detail } = req.body;
+    const { name, location, pictureUrl, detail, rating } = req.body;
     const newAccomodation = await addAccomodationService(
       name,
       location,
@@ -52,7 +52,7 @@ export async function getAccomodationDetailController(
     }
     const idNumber = Number(id);
     const accomodation = await getAccomodationDetailService(idNumber);
-    const roomTypes = await getRoomServiceByAccomodationIdService(idNumber);
+    const roomTypes = await getRoomTypeByAccomodationIdService(idNumber);
     formatResponse(res, 200, {
       accomodation: accomodation,
       roomTypes: roomTypes,

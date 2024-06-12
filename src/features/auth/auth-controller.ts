@@ -1,7 +1,11 @@
 import type { Request, Response, NextFunction } from "express";
 
 import { formatResponse } from "../../utils/response-format.js";
-import { loginService, registerService } from "./auth-service.js";
+import {
+  loginService,
+  logoutService,
+  registerService,
+} from "./auth-service.js";
 import Joi from "joi";
 import { BadRequestError } from "../../utils/error-types.js";
 
@@ -61,6 +65,28 @@ export async function loginController(
     const { email, password } = req.body;
     const token = await loginService(email, password);
     formatResponse(res, 200, { token: `Bearer ${token}` });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function logoutController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const authHeader = req.headers["authorization"] as string;
+    const token = authHeader && authHeader.trim().split(" ")[1];
+
+    if (!token) {
+      throw new BadRequestError("Token not provided");
+    }
+    const blackListedToken = await logoutService(token);
+    formatResponse(res, 201, {
+      message: "logout success",
+      blackListedToken: blackListedToken,
+    });
   } catch (error) {
     next(error);
   }

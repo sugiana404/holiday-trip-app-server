@@ -22,6 +22,9 @@ export async function addAccomodationService(
       location: location,
       pictureUrl: pictureUrl,
       detail: detail,
+      rating: 0,
+      totalRating: 0,
+      totalReviewer: 0,
     });
     return newAccomodation;
   } catch (error) {
@@ -38,6 +41,44 @@ export async function getAccomodationDetailService(
       throw new DataNotFoundError("Data not found");
     }
     return accomodationData;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function updateAccomodationRatingService(
+  accomodationId: number,
+  rating: number
+): Promise<Record<string, any>> {
+  try {
+    const accomodation = await Accomodation.findByPk(accomodationId);
+    if (
+      accomodation === undefined ||
+      accomodation?.rating === undefined ||
+      accomodation?.totalRating === undefined ||
+      accomodation.totalReviewer === undefined
+    ) {
+      throw new DataNotFoundError("Accomodation not exist");
+    }
+
+    const newTotalRating = accomodation?.rating + rating;
+    const newTotalReviewer = accomodation.totalReviewer + 1;
+    const newRating = newTotalRating / newTotalReviewer;
+
+    accomodation.set({
+      rating: newRating,
+      totalRating: newTotalRating,
+      totalReviewer: newTotalReviewer,
+    });
+
+    await accomodation.save();
+    const updatedData = {
+      rating: newRating,
+      totalRating: newTotalRating,
+      totalReviewer: newTotalReviewer,
+    };
+
+    return updatedData;
   } catch (error) {
     throw error;
   }

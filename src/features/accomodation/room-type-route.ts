@@ -1,9 +1,13 @@
 import { Router } from "express";
-import { createRoomTypeController } from "./room-type-controller.js";
+import {
+  createRoomTypeController,
+  getAllRoomTypeController,
+} from "./room-type-controller.js";
+import { jwtValidator } from "../../middleware/jwt-middleware.js";
 
 const roomTypeRouter = Router();
 
-// roomTypeRouter.get("/getAll");
-roomTypeRouter.post("/createRoom", createRoomTypeController);
+roomTypeRouter.post("/createRoom", jwtValidator, createRoomTypeController);
+roomTypeRouter.get("/get-all", getAllRoomTypeController);
 
 export { roomTypeRouter };

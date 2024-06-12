@@ -21,14 +21,23 @@ export async function createRoomService(
   }
 }
 
-export async function getRoomServiceByAccomodationIdService(
+export async function getRoomTypeByAccomodationIdService(
   accomodationId: number
 ): Promise<RoomType[]> {
   try {
-    const rooms = RoomType.findAll({
+    const rooms = await RoomType.findAll({
       where: { accomodationId: accomodationId },
       attributes: ["id", "name", "cost", "pictureUrl"],
     });
+    return rooms;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getAllRoomTypeService() {
+  try {
+    const rooms = await RoomType.findAll();
     return rooms;
   } catch (error) {
     throw error;

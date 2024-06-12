@@ -8,6 +8,8 @@ interface AccomodationAttributes {
   pictureUrl: string;
   detail: string;
   rating: number;
+  totalRating: number;
+  totalReviewer: number;
 }
 
 interface AccomodationCretionAttributes
@@ -23,6 +25,8 @@ class Accomodation
   public pictureUrl!: string;
   public detail!: string;
   public rating!: number;
+  public totalRating!: number;
+  public totalReviewer!: number;
 }
 
 Accomodation.init(
@@ -49,8 +53,19 @@ Accomodation.init(
       allowNull: false,
     },
     rating: {
-      type: DataTypes.NUMBER,
+      type: DataTypes.FLOAT,
       allowNull: false,
+      defaultValue: 0,
+    },
+    totalRating: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
+    totalReviewer: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
     },
   },
   {
