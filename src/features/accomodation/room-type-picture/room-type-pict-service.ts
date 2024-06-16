@@ -1,6 +1,6 @@
-import { RoomTypePictures } from "./room-type-pictures-model.js";
+import { RoomTypePictures } from "./room-type-pict-model.js";
 
-export async function addRoomTypesPictureService(
+export async function addRoomTypesPictService(
   roomTypeId: number,
   pictureUrlArray: Array<string>
 ) {
@@ -21,7 +21,7 @@ export async function addRoomTypesPictureService(
   }
 }
 
-export async function getAllRoomTypesPictureService() {
+export async function getAllRoomTypesPictService() {
   try {
     const roomTypesPictures = await RoomTypePictures.findAll();
     return roomTypesPictures;
@@ -30,7 +30,7 @@ export async function getAllRoomTypesPictureService() {
   }
 }
 
-export async function getRTPByRTIDService(RTID: number) {
+export async function getRoomTypePictByRTIDService(RTID: number) {
   try {
     const pictures = await RoomTypePictures.findAll({
       where: { roomTypeId: RTID },

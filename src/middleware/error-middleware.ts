@@ -18,8 +18,14 @@ export const errorMiddleware = (
       .status(statusCode)
       .json(formatError(errorCode, errorMessage, errorDetail));
   } else {
-    return res
-      .status(500)
-      .json({ error: "Internal Server Error", details: { error } });
+    const internalServerErrorResponse = {
+      status: "error",
+      data: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Internal server error",
+        details: { error: error },
+      },
+    };
+    return res.status(500).json(internalServerErrorResponse);
   }
 };

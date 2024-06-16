@@ -1,5 +1,5 @@
 import { DataTypes, Model, type Optional } from "sequelize";
-import { sequelize } from "../../config/db-config.js";
+import { sequelize } from "../../../config/db-config.js";
 
 interface RoomTypePicturesAttributes {
   id: number;

@@ -1,8 +1,9 @@
 import jwt, { type JwtPayload } from "jsonwebtoken";
 import type { Request, Response, NextFunction } from "express";
-import { BadRequestError } from "../utils/error-types.js";
+import { BadRequestError, UnauthorizedError } from "../utils/error-types.js";
 import { serverConfig } from "../config/server-config.js";
 import { BlackListToken } from "../features/auth/black-list-token-model.js";
+import { errorDetail, errorMessage } from "../utils/error-message.js";
 
 interface MyJwtPayload extends JwtPayload {
   userId: number;
@@ -28,7 +29,9 @@ export async function jwtValidator(
     const token = authHeader && authHeader.trim().split(" ")[1];
 
     if (!token) {
-      throw new BadRequestError("Token not provided");
+      throw new UnauthorizedError(errorMessage.unauthorized, {
+        error: errorDetail.tokenEmpty,
+      });
     }
 
     const blackListedToken = await BlackListToken.findOne({
@@ -36,15 +39,15 @@ export async function jwtValidator(
     });
 
     if (blackListedToken) {
-      throw new BadRequestError(
-        "Token blacklisted, please generate new token."
-      );
+      throw new UnauthorizedError(errorMessage.unauthorized, {
+        error: errorDetail.tokenBlackListed,
+      });
     }
 
     jwt.verify(token, serverConfig.JWT_KEY, (err, decoded) => {
       if (err) {
-        throw new BadRequestError("Token expired or invalid", {
-          resourceValue: token,
+        throw new UnauthorizedError(errorMessage.unauthorized, {
+          error: errorDetail.tokenInvalid,
         });
       }
       req.userId = (decoded as MyJwtPayload)?.userId;

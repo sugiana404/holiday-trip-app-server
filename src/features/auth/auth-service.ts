@@ -1,9 +1,10 @@
 import { serverConfig } from "../../config/server-config.js";
-import { BadRequestError } from "../../utils/error-types.js";
+import { BadRequestError, DataNotFoundError } from "../../utils/error-types.js";
 import { User } from "../user/user-model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { BlackListToken } from "./black-list-token-model.js";
+import { errorDetail, errorMessage } from "../../utils/error-message.js";
 
 export async function registerService(
   email: string,
@@ -15,7 +16,9 @@ export async function registerService(
   try {
     const user = await User.findOne({ where: { email: email } });
     if (user) {
-      throw new BadRequestError("Email already registered.");
+      throw new BadRequestError(errorMessage.invalidInput, {
+        error: errorDetail.emailAlreadyRegistered,
+      });
     }
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -40,11 +43,15 @@ export async function loginService(
   try {
     const user = await User.findOne({ where: { email: email } });
     if (!user) {
-      throw new BadRequestError("Email unregistered");
+      throw new DataNotFoundError(errorMessage.dataNotFound, {
+        error: errorDetail.emailUnregistered,
+      });
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new BadRequestError("Email or password is invalid");
+      throw new BadRequestError(errorMessage.invalidInput, {
+        error: errorDetail.passwordNotMatch,
+      });
     }
     const token = jwt.sign(
       { userId: user.id, email: user.email },

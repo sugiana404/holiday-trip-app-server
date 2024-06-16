@@ -1,20 +1,20 @@
 import type { Request, Response, NextFunction } from "express";
 import {
-  addRoomTypesPictureService,
-  getAllRoomTypesPictureService,
-  getRTPByRTIDService,
-} from "./room-type-pictures-service.js";
-import { formatResponse } from "../../utils/response-format.js";
-import { BadRequestError } from "../../utils/error-types.js";
+  addRoomTypesPictService,
+  getAllRoomTypesPictService,
+  getRoomTypePictByRTIDService,
+} from "./room-type-pict-service.js";
+import { formatResponse } from "../../../utils/response-format.js";
+import { BadRequestError } from "../../../utils/error-types.js";
 
-export async function addRoomTypesPictureController(
+export async function addRoomTypesPictController(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
   try {
     const { roomTypeId, pictureUrlArray } = req.body;
-    const newPictures = await addRoomTypesPictureService(
+    const newPictures = await addRoomTypesPictService(
       roomTypeId,
       pictureUrlArray
     );
@@ -24,20 +24,20 @@ export async function addRoomTypesPictureController(
   }
 }
 
-export async function getAllRoomTypesPictureController(
+export async function getAllRoomTypesPictController(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
   try {
-    const roomTypesPictures = await getAllRoomTypesPictureService();
+    const roomTypesPictures = await getAllRoomTypesPictService();
     formatResponse(res, 200, roomTypesPictures);
   } catch (error) {
     next(error);
   }
 }
 
-export async function getRTPbyRTIDController(
+export async function getRoomTypePictByRTIDController(
   req: Request,
   res: Response,
   next: NextFunction
@@ -48,7 +48,7 @@ export async function getRTPbyRTIDController(
       throw new BadRequestError("RTID params is empty");
     }
     const rtidInNumber = Number(rtid);
-    const pictures = await getRTPByRTIDService(rtidInNumber);
+    const pictures = await getRoomTypePictByRTIDService(rtidInNumber);
     formatResponse(res, 200, pictures);
   } catch (error) {
     next(error);

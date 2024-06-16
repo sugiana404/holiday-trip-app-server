@@ -1,7 +1,7 @@
 import { DataTypes, Model, type Optional } from "sequelize";
-import { sequelize } from "../../config/db-config.js";
-import { Accomodation } from "./accomodation-model.js";
-import { User } from "../user/user-model.js";
+import { sequelize } from "../../../config/db-config.js";
+import { Accomodation } from "../accommodation/accom-model.js";
+import { User } from "../../user/user-model.js";
 
 interface AccomodationReviewAttributes {
   id: number;

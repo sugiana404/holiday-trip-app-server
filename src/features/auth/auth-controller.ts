@@ -1,5 +1,4 @@
 import type { Request, Response, NextFunction } from "express";
-
 import { formatResponse } from "../../utils/response-format.js";
 import {
   loginService,
@@ -7,7 +6,8 @@ import {
   registerService,
 } from "./auth-service.js";
 import Joi from "joi";
-import { BadRequestError } from "../../utils/error-types.js";
+import { BadRequestError, UnauthorizedError } from "../../utils/error-types.js";
+import { errorDetail, errorMessage } from "../../utils/error-message.js";
 
 export async function registerController(
   req: Request,
@@ -22,10 +22,9 @@ export async function registerController(
       birthDay: Joi.date().required(),
       phoneNumber: Joi.string().required(),
     });
-
     const { error, value } = schema.validate(req.body);
     if (error) {
-      throw new BadRequestError("Joi validation error", {
+      throw new BadRequestError(errorMessage.invalidInput, {
         error: error.details[0]?.message,
       });
     }
@@ -57,7 +56,7 @@ export async function loginController(
 
     const { error, value } = schema.validate(req.body);
     if (error) {
-      throw new BadRequestError("Joi validation error", {
+      throw new BadRequestError(errorMessage.invalidInput, {
         error: error.details[0]?.message,
       });
     }
@@ -77,11 +76,8 @@ export async function logoutController(
 ) {
   try {
     const authHeader = req.headers["authorization"] as string;
-    const token = authHeader && authHeader.trim().split(" ")[1];
+    const token = authHeader && (authHeader.trim().split(" ")[1] as string);
 
-    if (!token) {
-      throw new BadRequestError("Token not provided");
-    }
     const blackListedToken = await logoutService(token);
     formatResponse(res, 201, {
       message: "logout success",
